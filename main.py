@@ -26,8 +26,7 @@ logger = logging.getLogger(__name__)
 
 def initializeSpreadsheetAPI(spreadsheetLink):
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-    #SERVICE_ACCOUNT_FILE = '/home/pi/Desktop/projects/Life-Balance-Telegram-Bot/spreadsheetKeys.json'
-    SERVICE_ACCOUNT_FILE = './spreadsheetKeys.json'
+    SERVICE_ACCOUNT_FILE = directory + 'spreadsheetKeys.json'
     credentials = None
     credentials = service_account.Credentials.from_service_account_file(
             SERVICE_ACCOUNT_FILE, scopes=SCOPES)
