@@ -64,8 +64,8 @@ def setReplyKeyboard(user_categories):
     
     return reply_keyboard
 
-#directory = "/home/pi/Desktop/projects/Life-Balance-Telegram-Bot/"
-directory = "./"
+directory = "/home/pi/Desktop/projects/Life-Balance-Telegram-Bot/"
+#directory = "./"
 user_categories = importUserCategories(directory)
 reply_keyboard = setReplyKeyboard(user_categories)
 
