@@ -39,7 +39,7 @@ def initializeSpreadsheetAPI(spreadsheetLink):
 def importUserCategories(directory):
     """Retriving users categories"""
     try:
-        f = open(directory + "spreadsheetLinks.json")
+        f = open(directory + "userCategories.json")
         data = json.load(f)
         user_categories = data
     except IndexError as e:
@@ -60,11 +60,10 @@ def setReplyKeyboard(user_categories):
                     tmp_reply_keyboard.append(user_categories[user][type][i:i+1])
             
             reply_keyboard[user][type] = tmp_reply_keyboard
-    
     return reply_keyboard
 
-directory = "/home/pi/Desktop/projects/Life-Balance-Telegram-Bot/"
-#directory = "./"
+#directory = "/home/pi/Desktop/projects/Life-Balance-Telegram-Bot/"
+directory = "./"
 user_categories = importUserCategories(directory)
 reply_keyboard = setReplyKeyboard(user_categories)
 
@@ -102,7 +101,6 @@ async def cancel(update: Update, context: CallbackContext) -> int:
 async def add_expense(update: Update, context: CallbackContext) -> int:
     global current_user
     current_user = str(update.message.from_user.id)
-
 
     await update.message.reply_text(
         "Select the expense category..., \n\n/cancel to UNDO", 
