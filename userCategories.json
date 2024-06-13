@@ -2,7 +2,8 @@
     "224331200": {
         "Income": [
             "Salary",
-            "Donations"
+            "Donations",
+            "Ccc"
         ],
         "Expense": [
             "Business trip",

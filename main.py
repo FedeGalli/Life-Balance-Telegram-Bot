@@ -62,8 +62,8 @@ def setReplyKeyboard(user_categories):
             reply_keyboard[user][type] = tmp_reply_keyboard
     return reply_keyboard
 
-directory = "/home/pi/Desktop/projects/Life-Balance-Telegram-Bot/"
-#directory = "./"
+#directory = "/home/pi/Desktop/projects/Life-Balance-Telegram-Bot/"
+directory = "./"
 user_categories = importUserCategories(directory)
 reply_keyboard = setReplyKeyboard(user_categories)
 
@@ -90,7 +90,6 @@ async def start(update: Update, context: CallbackContext):
         chat_id=update.effective_chat.id,
         text='Welcome, i am glad you are managing your finance, keep it up!!!'
     )
-    print(update.effective_chat.id)
 
 async def cancel(update: Update, context: CallbackContext) -> int:
     await update.message.reply_text(
@@ -105,7 +104,7 @@ async def add_expense(update: Update, context: CallbackContext) -> int:
     await update.message.reply_text(
         "Select the expense category..., \n\n/cancel to UNDO", 
         reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard[current_user]["Expense"], resize_keyboard=True, one_time_keyboard=True, input_field_placeholder='Choose...'
+            reply_keyboard[current_user]["Expense"], resize_keyboard=True, input_field_placeholder='Choose...'
         ),
     )
 
@@ -113,9 +112,12 @@ async def add_expense(update: Update, context: CallbackContext) -> int:
 
 async def add_expense_1(update: Update, context: CallbackContext) -> int:
 
+    await update.message.reply_text("Type the amount spent, \n\n/cancel to UNDO",
+        reply_markup=ReplyKeyboardRemove()
+    )   
+    
     global selected_expense_category
     selected_expense_category = update.message.text
-    await update.message.reply_text("Type the amount spent, \n\n/cancel to UNDO") 
 
     return EXPENSE_AMOUNT
 
@@ -143,7 +145,7 @@ async def add_expense_3(update: Update, context: CallbackContext) -> int:
 
         #get the total spent in the current month
         total_monthly_expense = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                            range= "NetWorth"+ current_year + "!" + chr(date.today().month + 66) + "11").execute()
+                            range= "Expenses"+ current_year + "!" + chr(date.today().month + 65) + "28").execute()
     
     except IndexError as e:
         await update.message.reply_text(e)
@@ -157,13 +159,10 @@ async def add_income(update: Update, context: CallbackContext) -> int:
     global current_user
     current_user = str(update.message.from_user.id)
 
-    print(reply_keyboard[current_user]["Income"])
-    print([user_categories[current_user]["Income"]])
-
     await update.message.reply_text(
         "Select the income category... \n\n/cancel to UNDO", 
         reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard[current_user]["Income"], resize_keyboard=True, one_time_keyboard=True, input_field_placeholder='Choose...'
+            reply_keyboard[current_user]["Income"], resize_keyboard=True, input_field_placeholder='Choose...'
         ),
     )
 
@@ -171,9 +170,12 @@ async def add_income(update: Update, context: CallbackContext) -> int:
 
 async def add_income_1(update: Update, context: CallbackContext) -> int:
 
+    await update.message.reply_text("Type the amount earned, \n\n/cancel to UNDO",
+        reply_markup=ReplyKeyboardRemove()
+    ) 
+
     global selected_income_category
     selected_income_category = update.message.text
-    await update.message.reply_text("Type the amount earned, \n\n/cancel to UNDO")
 
     return INCOME_AMOUNT
 
@@ -221,7 +223,7 @@ async def add_category(update: Update, context: CallbackContext) -> int:
     await update.message.reply_text(
         "Select the category type... \n\n/cancel to UNDO", 
         reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard_type, resize_keyboard=True, one_time_keyboard=True, input_field_placeholder='Choose...'
+            reply_keyboard_type, resize_keyboard=True, input_field_placeholder='Choose...'
         ),
     )
 
@@ -229,12 +231,15 @@ async def add_category(update: Update, context: CallbackContext) -> int:
 
 
 async def add_category_1(update: Update, context: CallbackContext) -> int:
+
+    await update.message.reply_text(
+        "Type the new category name, \n\n/cancel to UNDO", 
+        reply_markup=ReplyKeyboardRemove()
+    )
     global new_category_type
     new_category_type = update.message.text
-    await update.message.reply_text("Type the new category name, \n\n/cancel to UNDO")
 
     return CATEGORY_NAME
-
 
 async def add_category_2(update: Update, context: CallbackContext) -> int:
     global new_category_name
@@ -267,12 +272,11 @@ async def remove_category(update: Update, context: CallbackContext) -> int:
     await update.message.reply_text(
         "Select the category type to remove... \n\n/cancel to UNDO", 
         reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard_type, resize_keyboard=True, one_time_keyboard=True, input_field_placeholder='Choose...'
+            reply_keyboard_type, resize_keyboard=True, input_field_placeholder='Choose...'
         ),
     )
 
     return CATEGORY_TYPE
-
 
 async def remove_category_1(update: Update, context: CallbackContext) -> int:
     global remove_category_type
@@ -282,12 +286,11 @@ async def remove_category_1(update: Update, context: CallbackContext) -> int:
     await update.message.reply_text(
         "Select the category to remove... \n\n/cancel to UNDO", 
         reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard[current_user][remove_category_type], resize_keyboard=True, one_time_keyboard=True, input_field_placeholder='Choose...'
+            reply_keyboard[current_user][remove_category_type], resize_keyboard=True, input_field_placeholder='Choose...'
         ),
     )
 
     return CATEGORY_NAME
-
 
 async def remove_category_2(update: Update, context: CallbackContext) -> int:
     global remove_category_name
@@ -304,7 +307,10 @@ async def remove_category_2(update: Update, context: CallbackContext) -> int:
     except:
         print("Unable to write user categories")
 
-    await update.message.reply_text("Category correctly removed.")
+    await update.message.reply_text(
+        "Category correctly removed.", 
+        reply_markup=ReplyKeyboardRemove()
+    )
 
     return ConversationHandler.END
 
