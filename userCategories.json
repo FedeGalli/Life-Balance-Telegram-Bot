@@ -1,44 +1,37 @@
 {
-    "224331200": {
-        "Income": [
-            "Salary",
-            "Donations",
-            "TR Interests"
-        ],
-        "Expense": [
-            "Business trip",
-            "Clothing",
-            "Free time",
-            "Gift",
-            "Health",
-            "Investement",
-            "Phone",
-            "Restaurant",
-            "Supermarket",
-            "Transport",
-            "Travel"
-        ]
-    },
-    "6464119475": {
-        "Income": [
-            "Salary",
-            "Donations"
-        ],
-        "Expense": [
-            "Business trip",
-            "Beauty",
-            "Car tax",
-            "Clothing",
-            "Free time",
-            "Gift",
-            "Health",
-            "House",
-            "Insurance",
-            "Investement",
-            "Restaurant",
-            "Supermarket",
-            "Transport",
-            "Travel"
-        ]
-    }
+  "224331200": {
+    "Income": ["Salary", "Donations", "TR Interests"],
+    "Expense": [
+      "Business trip",
+      "Clothing",
+      "Free time",
+      "Gift",
+      "Health",
+      "Investement",
+      "Phone",
+      "Restaurant",
+      "Supermarket",
+      "Transport",
+      "Travel"
+    ]
+  },
+  "6464119475": {
+    "Income": ["Salary", "Donations"],
+    "Expense": [
+      "Business trip",
+      "Beauty",
+      "Car tax",
+      "Clothing",
+      "Free time",
+      "Gift",
+      "Health",
+      "House",
+      "Insurance",
+      "Investement",
+      "Restaurant",
+      "Supermarket",
+      "Transport",
+      "Travel"
+    ]
+  }
 }

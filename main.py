@@ -50,6 +50,8 @@ def importUserCategories(directory):
 def setReplyKeyboard(user_categories):
     reply_keyboard = {}
     for user in user_categories:
+        user_categories[user]["Income"].sort()
+        user_categories[user]["Expense"].sort()
         reply_keyboard[user] = {"Income" : [], "Expense" : []}
         for type in user_categories[user]:
             tmp_reply_keyboard = []
@@ -58,8 +60,9 @@ def setReplyKeyboard(user_categories):
                     tmp_reply_keyboard.append(user_categories[user][type][i:i+2])
                 else:
                     tmp_reply_keyboard.append(user_categories[user][type][i:i+1])
-            
+
             reply_keyboard[user][type] = tmp_reply_keyboard
+
     return reply_keyboard
 
 directory = "/home/pi/Desktop/projects/Life-Balance-Telegram-Bot/"
@@ -79,7 +82,7 @@ try:
     for element in data:
         tmp_sheet, tmp_sample_spreadsheet_id = initializeSpreadsheetAPI(data[element]["life_balance_link"])
         user_sheet_info[element] = [tmp_sheet, tmp_sample_spreadsheet_id]
-    
+
 except IndexError as e:
     print(e)
 
@@ -102,7 +105,7 @@ async def add_expense(update: Update, context: CallbackContext) -> int:
     current_user = str(update.message.from_user.id)
 
     await update.message.reply_text(
-        "Select the expense category..., \n\n/cancel to UNDO", 
+        "Select the expense category..., \n\n/cancel to UNDO",
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard[current_user]["Expense"], resize_keyboard=True, input_field_placeholder='Choose...'
         ),
@@ -114,8 +117,8 @@ async def add_expense_1(update: Update, context: CallbackContext) -> int:
 
     await update.message.reply_text("Type the amount spent, \n\n/cancel to UNDO",
         reply_markup=ReplyKeyboardRemove()
-    )   
-    
+    )
+
     global selected_expense_category
     selected_expense_category = update.message.text
 
@@ -123,7 +126,7 @@ async def add_expense_1(update: Update, context: CallbackContext) -> int:
 
 async def add_expense_2(update: Update, context: CallbackContext) -> int:
 
-    global selected_expense_amount 
+    global selected_expense_amount
     selected_expense_amount = update.message.text
     await update.message.reply_text("Type a description, \n\n/cancel to UNDO")
 
@@ -133,20 +136,20 @@ async def add_expense_3(update: Update, context: CallbackContext) -> int:
     current_year = str(date.today().year)
     current_date = str(date.today().strftime("%d/%m/%Y"))
     current_month = str(date.today().strftime("%b"))
-    global selected_expense_desc 
+    global selected_expense_desc
     selected_expense_desc = update.message.text
 
     sheet, SAMPLE_SPREADSHEET_ID = user_sheet_info[current_user][0], user_sheet_info[current_user][1]
 
     try:
 
-        sheet.values().append(spreadsheetId=SAMPLE_SPREADSHEET_ID, 
+        sheet.values().append(spreadsheetId=SAMPLE_SPREADSHEET_ID,
             range= "DB!A1" , valueInputOption="USER_ENTERED", body={"values":[['e', selected_expense_category, current_date, selected_expense_amount, selected_expense_desc, current_month]]}).execute()
 
         #get the total spent in the current month
         total_monthly_expense = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                             range= "Expenses"+ current_year + "!" + chr(date.today().month + 65) + "28").execute()
-    
+
     except IndexError as e:
         await update.message.reply_text(e)
         return ConversationHandler.END
@@ -160,7 +163,7 @@ async def add_income(update: Update, context: CallbackContext) -> int:
     current_user = str(update.message.from_user.id)
 
     await update.message.reply_text(
-        "Select the income category... \n\n/cancel to UNDO", 
+        "Select the income category... \n\n/cancel to UNDO",
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard[current_user]["Income"], resize_keyboard=True, input_field_placeholder='Choose...'
         ),
@@ -172,7 +175,7 @@ async def add_income_1(update: Update, context: CallbackContext) -> int:
 
     await update.message.reply_text("Type the amount earned, \n\n/cancel to UNDO",
         reply_markup=ReplyKeyboardRemove()
-    ) 
+    )
 
     global selected_income_category
     selected_income_category = update.message.text
@@ -191,20 +194,20 @@ async def add_income_3(update: Update, context: CallbackContext) -> int:
     current_year = str(date.today().year)
     current_date = str(date.today().strftime("%d/%m/%Y"))
     current_month = str(date.today().strftime("%b"))
-    global selected_income_desc 
+    global selected_income_desc
     selected_income_desc = update.message.text
 
     sheet, SAMPLE_SPREADSHEET_ID = user_sheet_info[current_user][0], user_sheet_info[current_user][1]
-    
+
     try:
 
-        sheet.values().append(spreadsheetId=SAMPLE_SPREADSHEET_ID, 
+        sheet.values().append(spreadsheetId=SAMPLE_SPREADSHEET_ID,
             range= "DB!A1" , valueInputOption="USER_ENTERED", body={"values":[['i', selected_income_category, current_date, selected_income_amount, selected_income_desc, current_month]]}).execute()
 
         #get the total earned in the current month
         total_monthly_expense = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                             range= "NetWorth"+ current_year + "!" + chr(date.today().month + 66) + "3").execute()
-    
+
     except IndexError as e:
         await update.message.reply_text(e)
         return ConversationHandler.END
@@ -221,7 +224,7 @@ async def add_category(update: Update, context: CallbackContext) -> int:
     reply_keyboard_type = [['Income', 'Expense']]
 
     await update.message.reply_text(
-        "Select the category type... \n\n/cancel to UNDO", 
+        "Select the category type... \n\n/cancel to UNDO",
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard_type, resize_keyboard=True, input_field_placeholder='Choose...'
         ),
@@ -233,7 +236,7 @@ async def add_category(update: Update, context: CallbackContext) -> int:
 async def add_category_1(update: Update, context: CallbackContext) -> int:
 
     await update.message.reply_text(
-        "Type the new category name, \n\n/cancel to UNDO", 
+        "Type the new category name, \n\n/cancel to UNDO",
         reply_markup=ReplyKeyboardRemove()
     )
     global new_category_type
@@ -248,12 +251,12 @@ async def add_category_2(update: Update, context: CallbackContext) -> int:
 
     text_message = "Category correctly added."
     if new_category_name not in user_categories[current_user][new_category_type]:
-        
+
         user_categories[current_user][new_category_type].append(new_category_name)
         reply_keyboard = setReplyKeyboard(user_categories)
         #add to json
         try:
-           with open(directory + "/userCategories.json", 'w', encoding='utf-8') as f: 
+           with open(directory + "/userCategories.json", 'w', encoding='utf-8') as f:
                 json.dump(user_categories, f, ensure_ascii=False, indent=4)
         except:
             print("Unable to write user categories")
@@ -270,7 +273,7 @@ async def remove_category(update: Update, context: CallbackContext) -> int:
     reply_keyboard_type = [['Income', 'Expense']]
 
     await update.message.reply_text(
-        "Select the category type to remove... \n\n/cancel to UNDO", 
+        "Select the category type to remove... \n\n/cancel to UNDO",
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard_type, resize_keyboard=True, input_field_placeholder='Choose...'
         ),
@@ -281,10 +284,10 @@ async def remove_category(update: Update, context: CallbackContext) -> int:
 async def remove_category_1(update: Update, context: CallbackContext) -> int:
     global remove_category_type
     remove_category_type = update.message.text
-    
+
 
     await update.message.reply_text(
-        "Select the category to remove... \n\n/cancel to UNDO", 
+        "Select the category to remove... \n\n/cancel to UNDO",
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard[current_user][remove_category_type], resize_keyboard=True, input_field_placeholder='Choose...'
         ),
@@ -301,14 +304,14 @@ async def remove_category_2(update: Update, context: CallbackContext) -> int:
     reply_keyboard = setReplyKeyboard(user_categories)
     #add to json
     try:
-       with open(directory + "/userCategories.json", 'w', encoding='utf-8') as f: 
+       with open(directory + "/userCategories.json", 'w', encoding='utf-8') as f:
             json.dump(user_categories, f, ensure_ascii=False, indent=4)
-        
+
     except:
         print("Unable to write user categories")
 
     await update.message.reply_text(
-        "Category correctly removed.", 
+        "Category correctly removed.",
         reply_markup=ReplyKeyboardRemove()
     )
 
@@ -362,7 +365,7 @@ def main() -> None:
 
     },
         fallbacks=[MessageHandler(filters.COMMAND, cancel)]
-    ) 
+    )
 
 
     application.add_handler(CommandHandler('start', start))
