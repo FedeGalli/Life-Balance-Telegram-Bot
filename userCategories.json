@@ -10,25 +10,27 @@
       "Investement",
       "Phone",
       "Restaurant",
+      "Sport",
       "Supermarket",
       "Transport",
       "Travel"
     ]
   },
   "6464119475": {
-    "Income": ["Salary", "Donations"],
+    "Income": ["Cashback", "Salary", "Donations"],
     "Expense": [
-      "Business trip",
+      "Bank tax",
       "Beauty",
-      "Car tax",
+      "Business trip",
       "Clothing",
+      "For me",
       "Free time",
       "Gift",
       "Health",
-      "House",
       "Insurance",
-      "Investement",
+      "Investements",
       "Restaurant",
+      "Sport",
       "Supermarket",
       "Transport",
       "Travel"
