@@ -128,6 +128,11 @@ async def add_expense_2(update: Update, context: CallbackContext) -> int:
 
     global selected_expense_amount
     selected_expense_amount = update.message.text
+
+    if not all([c.isdigit() or c == '.' for c in selected_expense_amount]):
+        await update.message.reply_text(selected_expense_amount + " is not a valid expense number, action canceled!!!\n\n/add_expense to retry.")
+        return ConversationHandler.END
+
     await update.message.reply_text("Type a description, \n\n/cancel to UNDO")
 
     return EXPENSE_DESC
@@ -186,6 +191,10 @@ async def add_income_2(update: Update, context: CallbackContext) -> int:
 
     global selected_income_amount
     selected_income_amount = update.message.text
+
+    if not all([c.isdigit() or c == '.' for c in selected_income_amount]):
+        await update.message.reply_text(selected_income_amount + " is not a valid income number, action canceled!!!\n\n/add_income to retry.")
+        return ConversationHandler.END
     await update.message.reply_text("Type a description, \n\n/cancel to UNDO")
 
     return INCOME_DESC
