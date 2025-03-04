@@ -34,6 +34,7 @@ def initializeSpreadsheetAPI(spreadsheetLink):
 
 def importUserCategories(directory):
     """Retriving users categories"""
+    user_categories = 0
     try:
         f = open(directory + "userCategories.json")
         data = json.load(f)
@@ -61,8 +62,8 @@ def setReplyKeyboard(user_categories):
 
     return reply_keyboard
 
-directory = "/home/pi/Desktop/projects/Life-Balance-Telegram-Bot/"
-#directory = "./"
+#directory = "/home/pi/Desktop/projects/Life-Balance-Telegram-Bot/"
+directory = "./"
 user_categories = importUserCategories(directory)
 reply_keyboard = setReplyKeyboard(user_categories)
 
@@ -158,6 +159,95 @@ async def add_expense_3(update: Update, context: CallbackContext) -> int:
     await update.message.reply_text(selected_expense_category + " Expense Updated!\n\nYour total monthly expense is: " + str(total_monthly_expense["values"][0][0]) + "💸 💸")
 
     return ConversationHandler.END
+
+async def add_shared_expense(update: Update, context: CallbackContext) -> int:
+    global current_user
+    current_user = str(update.message.from_user.id)
+
+    if current_user not in ["6464119475", "224331200"]:
+        await update.message.reply_text("You are not allowed!!!")
+        return ConversationHandler.END
+
+    await update.message.reply_text(
+        "Select the shared expense category..., \n\n/cancel to UNDO",
+        reply_markup=ReplyKeyboardMarkup(
+            reply_keyboard["Shared_Expense"]["Expense"], resize_keyboard=True, input_field_placeholder='Choose...'
+        ),
+    )
+
+    return EXPENSE_CATEGORY
+
+async def add_shared_expense_1(update: Update, context: CallbackContext) -> int:
+
+    await update.message.reply_text("Type the amount spent, \n\n/cancel to UNDO",
+        reply_markup=ReplyKeyboardRemove()
+    )
+
+    global selected_expense_category
+    selected_expense_category = update.message.text
+
+    return EXPENSE_AMOUNT
+
+async def add_shared_expense_2(update: Update, context: CallbackContext) -> int:
+
+    global selected_expense_amount
+    selected_expense_amount = update.message.text
+
+    if not all([c.isdigit() or c == '.' for c in selected_expense_amount]):
+        await update.message.reply_text(selected_expense_amount + " is not a valid expense number, action canceled!!!\n\n/add_shared_expense to retry.")
+        return ConversationHandler.END
+
+    await update.message.reply_text("Type a description, \n\n/cancel to UNDO")
+
+    return EXPENSE_DESC
+
+async def add_shared_expense_3(update: Update, context: CallbackContext) -> int:
+    current_year = str(date.today().year)
+    current_date = str(date.today().strftime("%d/%m/%Y"))
+    current_month = str(date.today().strftime("%b"))
+    global selected_expense_desc
+    selected_expense_desc = update.message.text
+
+
+    user_name = ""
+    other_user = ""
+
+
+    if current_user == "224331200":
+        user_name = "Federico"
+        other_user = "6464119475"
+    else:
+        user_name = "Carolina"
+        other_user = "224331200"
+
+    shared_sheet, SHARED_SAMPLE_SPREADSHEET_ID = user_sheet_info["shared"][0], user_sheet_info["shared"][1]
+    other_shared_sheet, OTHER_SHARED_SAMPLE_SPREADSHEET_ID = user_sheet_info[other_user][0], user_sheet_info[other_user][1]
+    sheet, SAMPLE_SPREADSHEET_ID = user_sheet_info[current_user][0], user_sheet_info[current_user][1]
+
+    try:
+
+        sheet.values().append(spreadsheetId=SAMPLE_SPREADSHEET_ID,
+            range= "DB!A1" , valueInputOption="USER_ENTERED", body={"values":[['e', selected_expense_category, current_date, float(selected_expense_amount) / 2, selected_expense_desc, current_month]]}).execute()
+
+        #get the total spent in the current month
+        total_monthly_expense = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
+                            range= "Expenses"+ current_year + "!" + chr(date.today().month + 65) + "28").execute()
+
+        other_shared_sheet.values().append(spreadsheetId=OTHER_SHARED_SAMPLE_SPREADSHEET_ID,
+            range= "DB!A1" , valueInputOption="USER_ENTERED", body={"values":[['e', selected_expense_category, current_date, float(selected_expense_amount) / 2, selected_expense_desc, current_month]]}).execute()
+
+        shared_sheet.values().append(spreadsheetId=SHARED_SAMPLE_SPREADSHEET_ID,
+            range= "DB!A1" , valueInputOption="USER_ENTERED", body={"values":[['e', selected_expense_category, current_date, selected_expense_amount, selected_expense_desc, current_month, user_name]]}).execute()
+
+
+    except IndexError as e:
+        await update.message.reply_text(e)
+        return ConversationHandler.END
+
+    await update.message.reply_text(selected_expense_category + "Shared expense Updated!\n\nYour total monthly expense is: " + str(total_monthly_expense["values"][0][0]) + "💸 💸")
+
+    return ConversationHandler.END
+
 
 async def add_income(update: Update, context: CallbackContext) -> int:
     global current_user
@@ -341,6 +431,17 @@ def main() -> None:
         fallbacks=[MessageHandler(filters.COMMAND, cancel)]
     )
 
+    add_shared_expense_handler = ConversationHandler(
+    entry_points=[CommandHandler('add_shared_expense', add_shared_expense)],
+    states={
+        EXPENSE_CATEGORY: [MessageHandler(filters.TEXT & ~filters.COMMAND, add_shared_expense_1)],
+        EXPENSE_AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, add_shared_expense_2)],
+        EXPENSE_DESC: [MessageHandler(filters.TEXT & ~filters.COMMAND, add_shared_expense_3)]
+
+    },
+        fallbacks=[MessageHandler(filters.COMMAND, cancel)]
+    )
+
     add_income_handler = ConversationHandler(
     entry_points=[CommandHandler('add_income', add_income)],
     states={
@@ -376,6 +477,7 @@ def main() -> None:
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('help', help))
     application.add_handler(add_expense_handler)
+    application.add_handler(add_shared_expense_handler)
     application.add_handler(add_income_handler)
     application.add_handler(add_category_handler)
     application.add_handler(remove_category_handler)

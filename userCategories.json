@@ -3,17 +3,22 @@
     "Income": ["Salary", "Donations", "TR Interests"],
     "Expense": [
       "Business trip",
+      "Bills",
+      "Loan",
       "Clothing",
       "Free time",
       "Gift",
       "Health",
       "Investement",
+      "Insurance",
       "Phone",
       "Restaurant",
       "Sport",
       "Supermarket",
+      "Tech",
       "Transport",
-      "Travel"
+      "Travel",
+      "Home"
     ]
   },
   "6464119475": {
@@ -33,7 +38,27 @@
       "Sport",
       "Supermarket",
       "Transport",
-      "Travel"
+      "Travel",
+      "Bills",
+      "Loan",
+      "Home"
+    ]
+  },
+  "Shared_Expense": {
+    "Income": [],
+    "Expense": [
+      "Bills",
+      "Loan",
+      "Supermarket",
+      "Travel",
+      "Transport",
+      "Free time",
+      "Restaurant",
+      "Health",
+      "Insurance",
+      "Sport",
+      "Gift",
+      "Home"
     ]
   }
 }
