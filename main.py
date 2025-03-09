@@ -233,6 +233,10 @@ async def add_shared_expense_3(update: Update, context: CallbackContext) -> int:
         total_monthly_expense = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                             range= "Expenses"+ current_year + "!" + chr(date.today().month + 65) + "28").execute()
 
+        #get the total spent in the current month
+        other_total_monthly_expense = sheet.values().get(spreadsheetId=OTHER_SHARED_SAMPLE_SPREADSHEET_ID,
+                            range= "Expenses"+ current_year + "!" + chr(date.today().month + 65) + "28").execute()
+
         other_shared_sheet.values().append(spreadsheetId=OTHER_SHARED_SAMPLE_SPREADSHEET_ID,
             range= "DB!A1" , valueInputOption="USER_ENTERED", body={"values":[['e', selected_expense_category, current_date, float(selected_expense_amount) / 2, selected_expense_desc, current_month]]}).execute()
 
@@ -244,7 +248,12 @@ async def add_shared_expense_3(update: Update, context: CallbackContext) -> int:
         await update.message.reply_text(e)
         return ConversationHandler.END
 
-    await update.message.reply_text(selected_expense_category + "Shared expense Updated!\n\nYour total monthly expense is: " + str(total_monthly_expense["values"][0][0]) + "💸 💸")
+    await update.message.reply_text(selected_expense_category + " Shared expense Insert!\n\nYour total monthly expense is: " + str(total_monthly_expense["values"][0][0]) + "💸 💸")
+    # Sending a message to another user
+    await context.bot.send_message(
+        chat_id=other_user,
+        text= selected_expense_category + " Shared expense Insert by " + user_name + "❤️\n\nYour total monthly expense is: " + str(other_total_monthly_expense["values"][0][0]) + "💸 💸"
+    )
 
     return ConversationHandler.END
 
