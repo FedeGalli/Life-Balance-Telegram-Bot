@@ -62,7 +62,6 @@ def setReplyKeyboard(user_categories):
 
     return reply_keyboard
 
-#directory = "/home/pi/Desktop/projects/Life-Balance-Telegram-Bot/"
 directory = "./"
 user_categories = importUserCategories(directory)
 reply_keyboard = setReplyKeyboard(user_categories)
@@ -248,11 +247,11 @@ async def add_shared_expense_3(update: Update, context: CallbackContext) -> int:
         await update.message.reply_text(e)
         return ConversationHandler.END
 
-    await update.message.reply_text(selected_expense_category + " Shared expense Insert!\n\nYour total monthly expense is: " + str(total_monthly_expense["values"][0][0]) + "💸 💸")
+    await update.message.reply_text("Shared expense Insert!\n\n" + selected_expense_category + " " + str(float(selected_expense_amount)/2) + "€ " + selected_expense_desc + "\n\nYour total monthly expense is: " + str(total_monthly_expense["values"][0][0]) + "💸 💸")
     # Sending a message to another user
     await context.bot.send_message(
         chat_id=other_user,
-        text= selected_expense_category + " Shared expense Insert by " + user_name + "❤️\n\nYour total monthly expense is: " + str(other_total_monthly_expense["values"][0][0]) + "💸 💸"
+        text= selected_expense_category + " Shared expense Insert by " + user_name + "❤️\n\n" + selected_expense_category + " " + str(float(selected_expense_amount)/2) + "€ " + selected_expense_desc + "\n\nYour total monthly expense is: " + str(other_total_monthly_expense["values"][0][0]) + "💸 💸"
     )
 
     return ConversationHandler.END
