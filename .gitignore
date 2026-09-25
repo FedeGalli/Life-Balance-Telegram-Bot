@@ -1,3 +1,41 @@
+# Credentials and local configuration
 spreadsheetKeys.json
 spreadsheetLinks.json
 telegramToken.json
+.env
+.env.*
+!.env.example
+
+# Bot runtime data
+recurringExpenses.json
+recurringExpenses.json.tmp
+bankConnections.json
+bankTransactions.json
+
+# Python environments and generated files
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+build/
+dist/
+
+# Tests and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/

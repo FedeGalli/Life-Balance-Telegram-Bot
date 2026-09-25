@@ -1,10 +1,18 @@
-﻿# Life-Balance-Telegram-Bot
+# Life-Balance-Telegram-Bot
 
-<br /><br />This project aims to build a personal finance tracker using Google SpreadSheet API and telegram bot.
-By using the telegram bot we can add incomes and expenses under user custom categories. Then this data will be send to the associated google spreadsheet to manage all the calculations.
+This project is a personal finance tracker built with a Telegram bot and the Google Sheets API. Users can add income and expenses under custom categories, and the bot sends the data to their associated spreadsheets.
 
-<br />To deploy the project you just need to run the telegram bot server (main.py file), and add the keys to the Google Tecnical Account (to write on the sheet) and the link to the sheet itself.<br /><br />
+To deploy the project, run `main.py` and provide the Google service-account credentials, spreadsheet links, and Telegram token configuration files.
 
-A new user start with a default set of pre-initialized categories; then the user, through the telegram bot interface, is able to add/remove his own categories.
+Users start with preconfigured categories and can add or remove their own categories through Telegram.
 
-In this case, for the pourpose of the use-case, i'm storing all the data in a spreadsheet sheet using it as a DB to Analyze the data as needed. Evolution to store the date in a relational/non-relational DB can be made to analyze the data with BI tools for example.
+## Recurring expenses
+
+- `/add_recurring_expense`: creates a personal or shared monthly expense, starting next month.
+- `/delete_recurring_expense`: deletes a recurring expense. Either shared-plan member can delete shared entries.
+
+The bot stores recurring definitions and their per-month processing state in `recurringExpenses.json`.
+
+Recurring expenses are added on the first day of each month at 10:00 in the `Europe/Rome` timezone. If the bot was offline, it catches up when it starts again.
+
+Set `BOT_DATA_DIRECTORY` to place runtime JSON files in a persistent directory. The included Docker build script mounts the `life-balance-data` volume at `/data`, so recurring expenses survive container rebuilds.
